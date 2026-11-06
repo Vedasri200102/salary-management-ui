@@ -1,0 +1,93 @@
+
+<div class="employee-container">
+
+  <div class="page-header">
+    <div>
+      <h2>Employee Management</h2>
+      <p>Manage your organization's employees.</p>
+    </div>
+
+    <button class="add-btn">
+      + Add Employee
+    </button>
+  </div>
+
+  <div class="search-section">
+    <input
+      type="text"
+      placeholder="Search employees..."
+      [(ngModel)]="keyword"
+      (keyup.enter)="searchEmployees()"
+    />
+
+    <button (click)="searchEmployees()">
+      Search
+    </button>
+  </div>
+
+<p>
+  Loading: {{ loading }} |
+  Count: {{ employees.length }} |
+  Search: {{ keyword }}
+</p>
+  <p *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
+  </p>
+
+  <div class="table-container" *ngIf="!loading && !errorMessage">
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Employee Code</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Department</th>
+          <th>Country</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let employee of employees">
+          <td>{{ employee.id }}</td>
+          <td>{{ employee.employeeCode }}</td>
+          <td>
+            {{ employee.firstName }} {{ employee.lastName }}
+          </td>
+          <td>{{ employee.email }}</td>
+  <td>{{ employee.department?.departmentName }}</td>
+<td>{{ employee.country?.countryName }}</td>
+          <td>{{ employee.employmentStatus }}</td>
+        </tr>
+
+        <tr *ngIf="employees.length === 0">
+          <td colspan="7">No employees found.</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <div class="pagination" *ngIf="!loading && !errorMessage">
+
+    <span>Total employees: {{ totalElements }}</span>
+
+    <button
+      (click)="previousPage()"
+      [disabled]="page === 0">
+      Previous
+    </button>
+
+    <span>Page {{ page + 1 }}</span>
+
+    <button
+      (click)="nextPage()"
+      [disabled]="(page + 1) * size >= totalElements">
+      Next
+    </button>
+
+  </div>
+
+</div>
