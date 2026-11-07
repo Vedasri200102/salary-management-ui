@@ -1,1 +1,222 @@
-<p>salaries works!</p>
+
+<div class="salary-container">
+
+  <div class="page-header">
+    <div>
+      <h2>Salary Management</h2>
+      <p>Manage employee salary records and salary history.</p>
+    </div>
+
+    <button class="add-btn" (click)="openForm()">
+      + Add Salary
+    </button>
+  </div>
+
+  <p class="success" *ngIf="successMessage">
+    {{ successMessage }}
+  </p>
+
+  <p class="error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </p>
+
+  <!-- Salary form -->
+  <div class="form-container" *ngIf="showForm">
+
+    <h3>Create Salary Record</h3>
+
+    <form (ngSubmit)="saveSalary()" #salaryForm="ngForm">
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>Employee</label>
+          <select
+            name="employeeId"
+            [(ngModel)]="salaryRequest.employeeId"
+            required>
+            <option [ngValue]="0" disabled>Select Employee</option>
+            <option
+              *ngFor="let employee of employees"
+              [ngValue]="employee.id">
+              {{ getEmployeeName(employee) }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Basic Salary</label>
+          <input
+            type="number"
+            name="basicSalary"
+            [(ngModel)]="salaryRequest.basicSalary"
+            min="0"
+            step="0.01"
+            required />
+        </div>
+
+        <div class="form-group">
+          <label>Allowances</label>
+          <input
+            type="number"
+            name="allowances"
+            [(ngModel)]="salaryRequest.allowances"
+            min="0"
+            step="0.01"
+            required />
+        </div>
+
+        <div class="form-group">
+          <label>Bonus</label>
+          <input
+            type="number"
+            name="bonus"
+            [(ngModel)]="salaryRequest.bonus"
+            min="0"
+            step="0.01"
+            required />
+        </div>
+
+        <div class="form-group">
+          <label>Deductions</label>
+          <input
+            type="number"
+            name="deductions"
+            [(ngModel)]="salaryRequest.deductions"
+            min="0"
+            step="0.01"
+            required />
+        </div>
+
+        <div class="form-group">
+          <label>Pay Frequency</label>
+          <select
+            name="payFrequency"
+            [(ngModel)]="salaryRequest.payFrequency"
+            required>
+            <option value="MONTHLY">Monthly</option>
+            <option value="ANNUAL">Annual</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Effective From</label>
+          <input
+            type="date"
+            name="effectiveFrom"
+            [(ngModel)]="salaryRequest.effectiveFrom"
+            required />
+        </div>
+
+        <div class="form-group">
+          <label>Effective To (Optional)</label>
+          <input
+            type="date"
+            name="effectiveTo"
+            [(ngModel)]="salaryRequest.effectiveTo" />
+        </div>
+
+      </div>
+
+      <div class="calculation">
+        <p>
+          <strong>Gross Salary:</strong>
+          {{ grossSalary | number:'1.2-2' }}
+        </p>
+
+        <p>
+          <strong>Net Salary:</strong>
+          {{ netSalary | number:'1.2-2' }}
+        </p>
+
+        <small>Currency is automatically taken from the employee's country.</small>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="save-btn"
+          [disabled]="saving || !salaryForm.valid || netSalary < 0">
+          {{ saving ? 'Saving...' : 'Save Salary' }}
+        </button>
+
+        <button
+          type="button"
+          class="cancel-btn"
+          (click)="cancelForm()">
+          Cancel
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Salary table -->
+  <div class="table-container">
+
+    <h3>Salary Records</h3>
+
+    <p *ngIf="loading">Loading salary records...</p>
+
+    <table *ngIf="!loading">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Employee Code</th>
+          <th>Employee Name</th>
+          <th>Basic Salary</th>
+          <th>Gross Salary</th>
+          <th>Deductions</th>
+          <th>Net Salary</th>
+          <th>Currency</th>
+          <th>Frequency</th>
+          <th>Effective From</th>
+          <th>Effective To</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let salary of salaries">
+          <td>{{ salary.id }}</td>
+          <td>{{ salary.employeeCode }}</td>
+          <td>{{ salary.employeeName }}</td>
+          <td>{{ salary.basicSalary | number:'1.2-2' }}</td>
+          <td>{{ salary.grossSalary | number:'1.2-2' }}</td>
+          <td>{{ salary.deductions | number:'1.2-2' }}</td>
+          <td>{{ salary.netSalary | number:'1.2-2' }}</td>
+          <td>{{ salary.currencyCode }}</td>
+          <td>{{ salary.payFrequency }}</td>
+          <td>{{ salary.effectiveFrom }}</td>
+          <td>{{ salary.effectiveTo || 'Ongoing' }}</td>
+        </tr>
+
+        <tr *ngIf="salaries.length === 0">
+          <td colspan="11">No salary records found.</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="!loading">
+
+    <span>Total salary records: {{ totalElements }}</span>
+
+    <button
+      (click)="previousPage()"
+      [disabled]="page === 0">
+      Previous
+    </button>
+
+    <span>Page {{ page + 1 }}</span>
+
+    <button
+      (click)="nextPage()"
+      [disabled]="(page + 1) * size >= totalElements">
+      Next
+    </button>
+
+  </div>
+
+</div>
