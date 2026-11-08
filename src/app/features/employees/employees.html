@@ -1,18 +1,216 @@
 
 <div class="employee-container">
 
+  <!-- Page Header -->
   <div class="page-header">
     <div>
       <h2>Employee Management</h2>
       <p>Manage your organization's employees.</p>
     </div>
 
-    <button class="add-btn">
+    <button
+      class="add-btn"
+      *ngIf="!showAddForm"
+      (click)="openAddForm()">
       + Add Employee
     </button>
   </div>
 
-  <div class="search-section">
+  <!-- Success Message -->
+  <p class="success" *ngIf="successMessage">
+    {{ successMessage }}
+  </p>
+
+  <!-- Add Employee Form -->
+  <div class="add-employee-form" *ngIf="showAddForm">
+
+    <h3>Add New Employee</h3>
+
+<form class="employee-form" #employeeForm="ngForm" (ngSubmit)="saveEmployee()">
+      <div class="form-grid">
+
+        <!-- Employee Code -->
+        <div class="form-group">
+          <label>Employee Code *</label>
+          <input
+            type="text"
+            name="employeeCode"
+            [(ngModel)]="newEmployee.employeeCode"
+            placeholder="Enter employee code"
+            maxlength="30"
+            required
+            #employeeCode="ngModel"
+          />
+
+          <small class="error"
+            *ngIf="employeeCode.invalid && employeeCode.touched">
+            Employee code is required.
+          </small>
+        </div>
+
+        <!-- First Name -->
+        <div class="form-group">
+          <label>First Name *</label>
+          <input
+            type="text"
+            name="firstName"
+            [(ngModel)]="newEmployee.firstName"
+            placeholder="Enter first name"
+            maxlength="50"
+            required
+            #firstName="ngModel"
+          />
+
+          <small class="error"
+            *ngIf="firstName.invalid && firstName.touched">
+            First name is required.
+          </small>
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-group">
+          <label>Last Name *</label>
+          <input
+            type="text"
+            name="lastName"
+            [(ngModel)]="newEmployee.lastName"
+            placeholder="Enter last name"
+            maxlength="50"
+            required
+            #lastName="ngModel"
+          />
+
+          <small class="error"
+            *ngIf="lastName.invalid && lastName.touched">
+            Last name is required.
+          </small>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label>Email *</label>
+          <input
+            type="email"
+            name="email"
+            [(ngModel)]="newEmployee.email"
+            placeholder="Enter email address"
+            required
+            email
+            #email="ngModel"
+          />
+
+          <small class="error"
+            *ngIf="email.invalid && email.touched">
+            Enter a valid email address.
+          </small>
+        </div>
+
+        <!-- Department -->
+        <div class="form-group">
+          <label>Department *</label>
+          <select
+            name="department"
+            [(ngModel)]="newEmployee.department"
+            required
+            #department="ngModel">
+
+            <option value="">Select Department</option>
+
+            <option
+              *ngFor="let dept of departments"
+              [value]="dept.departmentName">
+              {{ dept.departmentName }}
+            </option>
+
+          </select>
+
+          <small class="error"
+            *ngIf="department.invalid && department.touched">
+            Please select a department.
+          </small>
+        </div>
+
+        <!-- Country -->
+        <div class="form-group">
+          <label>Country *</label>
+          <select
+            name="country"
+            [(ngModel)]="newEmployee.country"
+            required
+            #country="ngModel">
+
+            <option value="">Select Country</option>
+
+            <option
+              *ngFor="let c of countries"
+              [value]="c.countryName">
+              {{ c.countryName }}
+            </option>
+
+          </select>
+
+          <small class="error"
+            *ngIf="country.invalid && country.touched">
+            Please select a country.
+          </small>
+        </div>
+
+        <!-- Joining Date -->
+        <div class="form-group">
+          <label>Joining Date *</label>
+          <input
+            type="date"
+            name="joiningDate"
+            [(ngModel)]="newEmployee.joiningDate"
+            [max]="today"
+            required
+            #joiningDate="ngModel"
+          />
+
+          <small class="error"
+            *ngIf="joiningDate.invalid && joiningDate.touched">
+            Please select a valid joining date.
+          </small>
+        </div>
+
+      </div>
+
+      <!-- Backend Error -->
+      <p class="error" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </p>
+
+      <!-- Form Buttons -->
+      <div class="form-actions">
+
+        <button
+          type="submit"
+          class="save-btn"
+          [disabled]="employeeForm.invalid || saving">
+
+          {{ saving ? 'Saving...' : 'Save Employee' }}
+
+        </button>
+
+        <button
+          type="button"
+          class="cancel-btn"
+          (click)="closeAddForm()"
+          [disabled]="saving">
+
+          Cancel
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-section" *ngIf="!showAddForm">
+
     <input
       type="text"
       placeholder="Search employees..."
@@ -23,18 +221,22 @@
     <button (click)="searchEmployees()">
       Search
     </button>
+
   </div>
 
-<p>
-  Loading: {{ loading }} |
-  Count: {{ employees.length }} |
-  Search: {{ keyword }}
-</p>
-  <p *ngIf="errorMessage" class="error">
+  <!-- Loading -->
+  <p *ngIf="loading">
+    Loading employees...
+  </p>
+
+  <!-- Employee List Error -->
+  <p class="error" *ngIf="errorMessage && !showAddForm">
     {{ errorMessage }}
   </p>
 
-  <div class="table-container" *ngIf="!loading && !errorMessage">
+  <!-- Employee Table -->
+  <div class="table-container"
+       *ngIf="!loading && !errorMessage && !showAddForm">
 
     <table>
       <thead>
@@ -50,27 +252,39 @@
       </thead>
 
       <tbody>
+
         <tr *ngFor="let employee of employees">
+
           <td>{{ employee.id }}</td>
+
           <td>{{ employee.employeeCode }}</td>
+
           <td>
             {{ employee.firstName }} {{ employee.lastName }}
           </td>
+
           <td>{{ employee.email }}</td>
-  <td>{{ employee.department?.departmentName }}</td>
-<td>{{ employee.country?.countryName }}</td>
+
+          <td>{{ employee.department?.departmentName }}</td>
+
+          <td>{{ employee.country?.countryName }}</td>
+
           <td>{{ employee.employmentStatus }}</td>
+
         </tr>
 
         <tr *ngIf="employees.length === 0">
           <td colspan="7">No employees found.</td>
         </tr>
+
       </tbody>
     </table>
 
   </div>
 
-  <div class="pagination" *ngIf="!loading && !errorMessage">
+  <!-- Pagination -->
+  <div class="pagination"
+       *ngIf="!loading && !errorMessage && !showAddForm">
 
     <span>Total employees: {{ totalElements }}</span>
 

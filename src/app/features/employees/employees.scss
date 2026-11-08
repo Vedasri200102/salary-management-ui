@@ -75,3 +75,64 @@ th {
   gap: 15px;
   margin-top: 20px;
 }
+
+
+.employee-form {
+  margin-top: 25px;
+  padding: 25px;
+  max-width: 550px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.employee-form label {
+  display: block;
+  margin-bottom: 7px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.employee-form input,
+.employee-form select {
+  display: block;
+  width: 100%;
+  max-width: 450px;
+  padding: 10px 12px;
+  margin-bottom: 18px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.employee-form input:focus,
+.employee-form select:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.employee-form button {
+  padding: 11px 22px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.employee-form button[type="submit"] {
+  background: #1976d2;
+  color: white;
+}
+
+.employee-form button[type="button"] {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.employee-form small {
+  display: block;
+  color: #d32f2f;
+  margin-top: -12px;
+  margin-bottom: 12px;
+}

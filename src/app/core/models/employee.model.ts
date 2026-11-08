@@ -33,8 +33,8 @@ export interface EmployeeRequest {
   firstName: string;
   lastName: string;
   email: string;
-  departmentId: number;
-  countryId: number;
+  department: string;
+  country: string;
   joiningDate: string;
 }
 
